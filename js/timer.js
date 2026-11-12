@@ -72,11 +72,13 @@ function startTimer() {
                 breakEndSound.play()
                 timerConfig.mode='work'
                 timerConfig.timeLeft = timerConfig.settings.workTime * 60;
-            }
 
-            clearInterval(timerConfig.timeInterval);
-            timerConfig.isRunning = false;
-            updateTime();
+                clearInterval(timerConfig.timeInterval);
+                timerConfig.timeInterval = null;
+                timerConfig.isRunning = false;
+
+                updateTime();
+            }
         }
     },1000)
 }

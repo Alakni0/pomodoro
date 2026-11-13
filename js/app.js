@@ -49,12 +49,20 @@ function updateTime(){
     timerDisplay.innerText = formatTime(timerConfig.timeLeft);
 
     let modeText=""
-    if(timerConfig.mode==='work')
-        modeText="study time"
-    else if (timerConfig.mode==='shortBreak')
-        modeText="short break"
-    else
-        modeText="long break"
+    if (!timerConfig.isRunning && !timerConfig.isPaused) {
+        modeText = "Pomodoro";
+    }
+    else {
+        if(timerConfig.mode === 'work') {
+            modeText = "study time";
+        }
+        else if (timerConfig.mode === 'shortBreak') {
+            modeText = "short break";
+        }
+        else {
+            modeText = "long break";
+        }
+    }
 
     modeDisplay.innerText=modeText
 
@@ -88,5 +96,6 @@ endButton.addEventListener(`click`,() => {
 
     if(isSure) {
         stopTimer()
+        updateTime()
     }
 })

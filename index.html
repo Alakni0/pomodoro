@@ -8,6 +8,7 @@
 </head>
 <body>
     <button id="button-settings">⚙</button>
+    <button id="button-todo">☑</button>
     <div class="background">
         <div class="pomodoro-wrapper">
 
@@ -20,13 +21,13 @@
 
             <div class="button-group">
                     <button id="button-toggle">Start</button>
-                    <button id="button-end">Zakończ sesję</button>
+                    <button id="button-end">End session</button>
                 </div>
         </div>
     </div>
 
     <div id="settings-panel" class="settings-panel">
-        <button id="button-close-settings" class="close-btn">&times;</button>
+        <button id="button-close-settings" class="close-button">&times;</button>
         
         <h3>Time settings</h3>
 
@@ -46,7 +47,18 @@
         <button id="button-save-settings">Set times</button>
     </div>
 
+    <div id="todo-panel" class="todo-panel">
+        <button id="button-close-todo" class="close-button">&times;</button>
+        <h3>To-Do List</h3>
+        <div class="todo-input-row">
+            <input type="text" id="todo-input" placeholder="Add new task...">
+            <button id="button-add-todo">+</button>
+        </div>
+        <ul id="todo-list"></ul>
+    </div>
+
     <script src="js/timer.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/todo.js"></script>
 </body>
 </html>

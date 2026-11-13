@@ -24,22 +24,13 @@ saveSettingsButton.addEventListener('click', () => {
     const newBreakTime = parseInt(breakInput.value);
     const newLongBreakTime = parseInt(longBreakInput.value);
 
-    if (newWorkTime > 0 && newBreakTime > 0 && newLongBreakTime > 0) {
-
-        timerConfig.settings.workTime = newWorkTime;
-        timerConfig.settings.shortBreak = newBreakTime;
-        timerConfig.settings.longBreak = newLongBreakTime;
-
-        clearInterval(timerConfig.timeInterval);
-        timerConfig.isRunning = false;
-        timerConfig.isPaused = false;
-        timerConfig.mode = 'work';
-        timerConfig.timeLeft = timerConfig.settings.workTime * 60;
-
-        updateTime();
+     if (Number.isInteger(newWorkTime) && newWorkTime > 0 && Number.isInteger(newBreakTime) && newBreakTime > 0 && Number.isInteger(newLongBreakTime) && newLongBreakTime > 0)
+     {
+        updateTimerSettings(newWorkTime, newBreakTime, newLongBreakTime);
 
         settingsPanel.classList.remove('show');
-    } else {
+    }
+     else {
         alert("Time must be larger than 0!");
     }
 });
@@ -76,6 +67,20 @@ function updateTime(){
     else {
         toggleButton.innerText = "Start"
     }
+}
+
+function updateTimerSettings(workTime, shortBreakTime, longBreakTime) {
+    timerConfig.settings.workTime = workTime;
+    timerConfig.settings.shortBreakTime = shortBreakTime;
+    timerConfig.settings.longBreakTime = longBreakTime;
+
+    timerConfig.timeLeft = getModeTime() * 60;
+
+    if (timerConfig.isRunning) {
+        timerConfig.expectedEndTime = Date.now() + (timerConfig.timeLeft * 1000);
+    }
+
+    updateTime();
 }
 
 endButton.addEventListener(`click`,() => {

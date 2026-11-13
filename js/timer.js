@@ -23,65 +23,81 @@ function formatTime(time) {
     return `${minute}:${secund}`
 }
 
+function getModeTime() {
+    switch (timerConfig.mode) {
+        case 'work':
+            return timerConfig.settings.workTime;
+
+        case 'shortBreak':
+            return timerConfig.settings.shortBreakTime;
+
+        case 'longBreak':
+            return timerConfig.settings.longBreakTime;
+
+        default:
+            return timerConfig.settings.workTime;
+    }
+}
+
+
 function startTimer() {
-    if(timerConfig.isRunning===true)
-        return
+    if (timerConfig.isRunning) return;
 
     timerConfig.isPaused = false;
 
-    if(timerConfig.timeLeft<=0) {
-        switch(timerConfig.mode) {
-            case 'work':
-                timerConfig.timeLeft = timerConfig.settings.workTime * 60
-                break
-            case 'shortBreak':
-                timerConfig.timeLeft = timerConfig.settings.shortBreakTime * 60
-                break
-            case 'longBreak':
-                timerConfig.timeLeft = timerConfig.settings.longBreakTime * 60
-        }
+    if (timerConfig.timeLeft <= 0) {
+        timerConfig.timeLeft = getModeTime() * 60;
     }
 
-    timerConfig.isRunning = true
-
-    //ochrona przed uśpieniem zakładki
-    timerConfig.expectedEndTime = Date.now() + (timerConfig.timeLeft * 1000)
+    timerConfig.isRunning = true;
+    timerConfig.expectedEndTime = Date.now() + (timerConfig.timeLeft * 1000);
 
     timerConfig.timeInterval = setInterval(() => {
-        timerConfig.timeLeft = Math.max(0, Math.ceil((timerConfig.expectedEndTime - Date.now()) / 1000))
-        updateTime()
+        timerConfig.timeLeft = Math.max(
+            0,
+            Math.ceil((timerConfig.expectedEndTime - Date.now()) / 1000)
+        );
 
-        if(timerConfig.timeLeft<=0)
-        {
-            if(timerConfig.mode === 'work') {
-                workEndSound.play()
-                timerConfig.sessionCount += 1
+        updateTime();
 
-                if(timerConfig.sessionCount % timerConfig.longBreakInterval===0) {
-                    timerConfig.mode='longBreak'
-                    timerConfig.timeLeft = timerConfig.settings.longBreakTime * 60;
+        if (timerConfig.timeLeft <= 0) {
+
+            if (timerConfig.mode === 'work') {
+                workEndSound.play();
+
+                timerConfig.sessionCount++;
+
+                if (timerConfig.sessionCount % timerConfig.settings.longBreakInterval === 0) {
+                    timerConfig.mode = 'longBreak';
                 }
                 else {
-                    timerConfig.mode='shortBreak'
-                    timerConfig.timeLeft = timerConfig.settings.shortBreakTime * 60;
+                    timerConfig.mode = 'shortBreak';
                 }
-                expectedEndTime = Date.now() + (timerConfig.timeLeft * 1000);
+
+                timerConfig.timeLeft = getModeTime() * 60;
+                timerConfig.expectedEndTime = Date.now() + (timerConfig.timeLeft * 1000);
+
                 updateTime();
             }
             else {
-                breakEndSound.play()
-                timerConfig.mode='work'
-                timerConfig.timeLeft = timerConfig.settings.workTime * 60;
+                breakEndSound.play();
 
                 clearInterval(timerConfig.timeInterval);
                 timerConfig.timeInterval = null;
+
+                timerConfig.mode = 'work';
+                timerConfig.timeLeft = getModeTime() * 60;
+                timerConfig.expectedEndTime = null;
+
                 timerConfig.isRunning = false;
+                timerConfig.isPaused = false;
 
                 updateTime();
             }
         }
-    },1000)
+    }, 1000);
 }
+
 
 function pauseTimer(){
     if (!timerConfig.isRunning) return
